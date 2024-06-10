@@ -3,6 +3,8 @@ from PIL import Image
 
 PROJECT_DIR = Path(__file__).resolve().parent
 
+EOF_MARKER = "\0"
+
 
 def encode_message(msg):
     """
@@ -10,6 +12,7 @@ def encode_message(msg):
     :param msg: String to be encoded
     :return: Encoded message as list of 2 bits
     """
+    msg += EOF_MARKER  # Append EOF marker to the message
     msg_bits = ''.join(format(ord(char), '08b') for char in msg)
     enc_msg = [int(msg_bits[i:i + 2], 2) for i in range(0, len(msg_bits), 2)]
     return enc_msg
@@ -18,13 +21,15 @@ def encode_message(msg):
 def decode_message(bits):
     encode_length = 2
     byte_size = 8
-    item_count_per_char = byte_size // encode_length
     bit_str = ''.join([format(b, '02b') for b in bits])
     msg = ''
     for i in range(0, len(bit_str), byte_size):
         byte = bit_str[i: i + byte_size]
         if len(byte) == byte_size:
-            msg += chr(int(byte, 2))
+            char = chr(int(byte, 2))
+            if char == EOF_MARKER:
+                break
+            msg += char
     return msg
 
 
