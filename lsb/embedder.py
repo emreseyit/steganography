@@ -48,7 +48,5 @@ def main():
     encoded_img.save(PROJECT_DIR.joinpath('src/images/source', 'Lenna_encoded.png'))
 
 
-
-
 if __name__ == '__main__':
     main()
